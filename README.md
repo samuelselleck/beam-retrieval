@@ -1,0 +1,1 @@
+* Dependency mamagement with poetry, run "poetry install" to install dependencies
