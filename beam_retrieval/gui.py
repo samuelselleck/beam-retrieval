@@ -1,38 +1,48 @@
 import sys
+import os 
+
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
 from PyQt5.QtWidgets import QApplication, QDialog, QWidget, QMainWindow, QFileDialog, QMessageBox, QVBoxLayout
 from PyQt5.uic import loadUi
 from matplotlib import image
 
 from matplotlib.backends.qt_compat import QtCore, QtWidgets
-from matplotlib.backends.backend_qt5agg import FigureCanvas, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt4agg import FigureCanvas, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
-import gs_beam_retrieval as retrieval
+import field_retrieval as retrieval
 import visualizations
+
+SCRIPT_DIR = os.path.realpath(sys.path[0])
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super(QMainWindow, self).__init__()
         self.app = app
-        self.ui = loadUi('../mainwindow.ui', self)
+        self.ui = loadUi(f'{SCRIPT_DIR}/../mainwindow.ui', self)
 
-        #Connect buttons
+        #Connect ui with functions
         buttons = ["choose_image_before_focus_button", "choose_image_behind_focus_button", "run_button"]
         for button_name in buttons:
             component = getattr(self.ui, button_name)
             component.clicked.connect(getattr(self, f'on_{button_name}'))
 
-        #Add plot widgets to ui, and collect all axis in self.pyplot_axs
-        original_images_fig = self.insert_figure("original_images_box")
-        original_images_fig.subplots(1, 2)
+        self.ui.image_before_focus_path.returnPressed.connect(self.on_image_before_focus_path)
+        self.ui.image_behind_focus_path.returnPressed.connect(self.on_image_behind_focus_path)
 
-        reconstructed_field_fig = self.insert_figure("reconstructed_field_box")
+        #Add plot widgets to ui, and collect all figures in self.pyplot_axs
+
         self.plot_handles = {
-            "original_images": original_images_fig,
-            "reconstructed_field": reconstructed_field_fig,
+            "original_images": self.insert_figure("original_images_box"),
+            "reconstructed_field": self.insert_figure("interactive_box"),
+            "focus_field": self.insert_figure("slices_box"),
+            "profile": self.insert_figure("profile_box"),
+            "farfield": self.insert_figure("farfield_box"),
         }
+
+        self.image_before = None
+        self.image_behind = None
 
         self.ui.show()
         self.ui.raise_()
@@ -44,16 +54,19 @@ class MainWindow(QMainWindow):
         self.on_image_before_focus_path()
     
     def on_image_before_focus_path(self):
-        before = image.imread(self.ui.image_before_focus_path.text())
-        self.set_fig_image(before, "original_images", 0)
+        self.image_before = image.imread(self.ui.image_before_focus_path.text())
+        visualizations.set_fig_images(self.plot_handles["original_images"], self.image_before, self.image_behind)
 
     def on_choose_image_behind_focus_button(self):
         self.ui.image_behind_focus_path.setText(self.open_image("Image Behind Focus"))
         self.on_image_behind_focus_path()
     
     def on_image_behind_focus_path(self):
-        behind = image.imread(self.ui.image_behind_focus_path.text())
-        self.set_fig_image(behind, "original_images", 1)
+        try:
+            self.image_behind = image.imread(self.ui.image_behind_focus_path.text())
+            visualizations.set_fig_images(self.plot_handles["original_images"], self.image_before, self.image_behind)
+        except:
+            self.show_message("could not import behind focus file, does it exist?")
     
     def on_run_button(self):
         data = {
@@ -68,9 +81,13 @@ class MainWindow(QMainWindow):
         retrieval = BeamRetrievalThread(self, data, self.on_beam_retrieved)      
         retrieval.start()
 
-    def on_beam_retrieved(self, F):
-        visualizations.interactive_field(self.plot_handles["reconstructed_field"], F, float(self.ui.distance_to_focus.text()))
-
+    def on_beam_retrieved(self, F_behind):
+        dist_to_focus = float(self.ui.distance_to_focus.text())
+        pixel_size = float(self.ui.pixel_size.text())
+        visualizations.interactive_field(self.plot_handles["reconstructed_field"], F_behind, dist_to_focus)
+        visualizations.plot_fields(self.plot_handles["focus_field"], F_behind, dist_to_focus)
+        visualizations.plot_profile(self.plot_handles["profile"], F_behind, dist_to_focus)
+        visualizations.plot_farfield(self.plot_handles["farfield"], F_behind, dist_to_focus, pixel_size)
 
     #Helper functions
 
@@ -85,11 +102,8 @@ class MainWindow(QMainWindow):
         box.addWidget(figure_widget)
         return figure_widget.figure
     
-    def set_fig_image(self, image, plot_handle, axis):
-        h, w = image.shape
-        self.plot_handles[plot_handle].axes[axis].imshow(image, extent=[0, w, h,0])
-        self.plot_handles[plot_handle].set_tight_layout(True)
-        self.plot_handles[plot_handle].canvas.draw()
+    def show_message(self, message):
+        print("MESSAGE:", message)
     
 class BeamRetrievalThread(QThread):
 
@@ -103,7 +117,7 @@ class BeamRetrievalThread(QThread):
 
 
     def run(self):
-        F = retrieval.gs_beam_retrieval(**self.data)
+        F = retrieval.mgsa_field_retrieval(**self.data)
         self.callback(F)
 
 if __name__ == "__main__":

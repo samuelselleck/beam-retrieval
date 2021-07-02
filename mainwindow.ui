@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>827</width>
-    <height>582</height>
+    <height>783</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -222,7 +222,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_original_images">
          <attribute name="title">
@@ -234,23 +234,23 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_intensity_profile">
+        <widget class="QWidget" name="tab_profile">
          <attribute name="title">
-          <string>Intensity Profile</string>
+          <string>Profile</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
-           <layout class="QVBoxLayout" name="intensity_profile_box"/>
+           <layout class="QVBoxLayout" name="profile_box"/>
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_focus">
+        <widget class="QWidget" name="tab_slices">
          <attribute name="title">
-          <string>Focus</string>
+          <string>Slices</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
-           <layout class="QVBoxLayout" name="focus_box"/>
+           <layout class="QVBoxLayout" name="slices_box"/>
           </item>
          </layout>
         </widget>
@@ -264,13 +264,13 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_reconstruced_field">
+        <widget class="QWidget" name="tab_interactive">
          <attribute name="title">
-          <string>Reconstructed Field</string>
+          <string>Interactive</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_7">
           <item>
-           <layout class="QVBoxLayout" name="reconstructed_field_box"/>
+           <layout class="QVBoxLayout" name="interactive_box"/>
           </item>
          </layout>
         </widget>
