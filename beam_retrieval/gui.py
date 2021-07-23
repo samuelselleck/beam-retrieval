@@ -7,7 +7,7 @@ from PyQt5.uic import loadUi
 from matplotlib import image
 
 from matplotlib.backends.qt_compat import QtCore, QtWidgets
-from matplotlib.backends.backend_qt4agg import FigureCanvas, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt5agg import FigureCanvas, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 
 import field_retrieval as retrieval
@@ -86,7 +86,7 @@ class MainWindow(QMainWindow):
         pixel_size = float(self.ui.pixel_size.text())
         visualizations.interactive_field(self.plot_handles["reconstructed_field"], F_behind, dist_to_focus)
         visualizations.plot_fields(self.plot_handles["focus_field"], F_behind, dist_to_focus)
-        visualizations.plot_profile(self.plot_handles["profile"], F_behind, dist_to_focus)
+        visualizations.plot_profile(self.plot_handles["profile"], F_behind, dist_to_focus, pixel_size)
         visualizations.plot_farfield(self.plot_handles["farfield"], F_behind, dist_to_focus, pixel_size)
 
     #Helper functions

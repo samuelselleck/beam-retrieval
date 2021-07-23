@@ -72,12 +72,12 @@ def plot_fields(fig, F_behind, dist_to_focus, unwrap = True):
     fig.set_tight_layout(True)
     fig.canvas.draw()
 
-def plot_profile(fig, F_behind, dist_to_focus):
-    metrics = field_analysis.get_slice_metrics(F_behind, dist_to_focus, steps=100)
+def plot_profile(fig, F_behind, dist_to_focus, pixel_size):
+    metrics = field_analysis.get_slice_metrics(F_behind, dist_to_focus, pixel_size, steps=100)
     fig.clear()
     ax = fig.subplots()
     x_name = "Distance From Focus"
-    y_names = ["Strehl Ratio"]
+    y_names = ["Ideal Peak Intensity", "Peak Intensity"]
     ax.set_xlabel(x_name)
     for y_name in y_names:
         ax.plot(metrics[x_name], metrics[y_name])
@@ -88,9 +88,21 @@ def plot_profile(fig, F_behind, dist_to_focus):
     fig.canvas.draw()
 
 def plot_farfield(fig, F_behind, dist_to_focus, pixel_size):
+
+    r, _ = lp.Intensity(F_behind).shape
+    F_behind = lp.Interpol(F_behind, r*pixel_size, 5*r)
+
     F_far = lp.PipFFT(F_behind)
-    image, r = _extract_beam_image(F_far, pixel_size)
-    set_fig_images(fig, image)
+    F_far = lp.SubPhase(F_far, 0)
+    F_focus_ideal = lp.PipFFT(F_far, -1)
+    F_focus = lp.Forvard(F_behind, -dist_to_focus)
+
+    max_ideal = np.max(lp.Intensity(F_focus_ideal))
+    max = np.max(lp.Intensity(F_focus))
+    print(f'{max_ideal=}')
+    print(f'{max=}')
+    image, r = _extract_beam_image(F_focus_ideal, pixel_size)
+    set_fig_images(fig, lp.Intensity(F_focus_ideal), lp.Intensity(F_far))
 
 def _extract_beam_image(F, pixel_size):
     *_, y, x = lp.Centroid(F)
