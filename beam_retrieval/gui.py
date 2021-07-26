@@ -31,8 +31,7 @@ class MainWindow(QMainWindow):
         self.ui.image_before_focus_path.returnPressed.connect(self.on_image_before_focus_path)
         self.ui.image_behind_focus_path.returnPressed.connect(self.on_image_behind_focus_path)
 
-        #Add plot widgets to ui, and collect all figures in self.pyplot_axs
-
+        #Add plot widgets to ui, and collect all figures in self.plot_handles
         self.plot_handles = {
             "original_images": self.insert_figure("original_images_box"),
             "reconstructed_field": self.insert_figure("interactive_box"),
@@ -62,11 +61,8 @@ class MainWindow(QMainWindow):
         self.on_image_behind_focus_path()
     
     def on_image_behind_focus_path(self):
-        try:
-            self.image_behind = image.imread(self.ui.image_behind_focus_path.text())
-            visualizations.set_fig_images(self.plot_handles["original_images"], self.image_before, self.image_behind)
-        except:
-            self.show_message("could not import behind focus file, does it exist?")
+        self.image_behind = image.imread(self.ui.image_behind_focus_path.text())
+        visualizations.set_fig_images(self.plot_handles["original_images"], self.image_before, self.image_behind)
     
     def on_run_button(self):
         data = {
@@ -121,7 +117,6 @@ class BeamRetrievalThread(QThread):
         self.callback(F)
 
 if __name__ == "__main__":
-
     app = QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()

@@ -34,6 +34,13 @@
         <property name="rightMargin">
          <number>0</number>
         </property>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="pixel_size">
+          <property name="text">
+           <string>10e-6</string>
+          </property>
+         </widget>
+        </item>
         <item row="4" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
@@ -41,17 +48,24 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="pixel_size">
-          <property name="text">
-           <string>6e-6</string>
-          </property>
-         </widget>
-        </item>
         <item row="6" column="0">
          <widget class="QLabel" name="label_4">
           <property name="text">
            <string>Wavelength (m):</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="QPushButton" name="choose_image_before_focus_button">
+          <property name="text">
+           <string>Choose</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QLineEdit" name="wavelength">
+          <property name="text">
+           <string>800e-9</string>
           </property>
          </widget>
         </item>
@@ -71,13 +85,6 @@
           </property>
          </spacer>
         </item>
-        <item row="6" column="1">
-         <widget class="QLineEdit" name="wavelength">
-          <property name="text">
-           <string>800e-9</string>
-          </property>
-         </widget>
-        </item>
         <item row="5" column="0">
          <widget class="QLabel" name="label_5">
           <property name="text">
@@ -85,24 +92,10 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="4">
-         <widget class="QPushButton" name="choose_image_before_focus_button">
-          <property name="text">
-           <string>Choose</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="4">
-         <widget class="QPushButton" name="choose_image_behind_focus_button">
-          <property name="text">
-           <string>Choose</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1" colspan="3">
-         <widget class="QLineEdit" name="image_before_focus_path">
-          <property name="text">
-           <string>G:/Atto/Data/LASC/kHz/atom-atto31/data2/2021-06-30/m30_uncorrected.bmp</string>
+        <item row="3" column="2">
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
          </widget>
         </item>
@@ -120,17 +113,24 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="2">
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+        <item row="1" column="4">
+         <widget class="QPushButton" name="choose_image_behind_focus_button">
+          <property name="text">
+           <string>Choose</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="3">
+         <widget class="QLineEdit" name="image_before_focus_path">
+          <property name="text">
+           <string>\\fysfile01\atomhome$\sa2421se\Desktop\beam-retrieval\testfiles\ast and coma correction\m30_A.bmp</string>
           </property>
          </widget>
         </item>
         <item row="1" column="1" colspan="3">
          <widget class="QLineEdit" name="image_behind_focus_path">
           <property name="text">
-           <string>G:/Atto/Data/LASC/kHz/atom-atto31/data2/2021-06-30/p30_uncorrected.bmp</string>
+           <string>\\fysfile01\atomhome$\sa2421se\Desktop\beam-retrieval\testfiles\ast and coma correction\p30_A.bmp</string>
           </property>
          </widget>
         </item>
@@ -222,7 +222,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_original_images">
          <attribute name="title">

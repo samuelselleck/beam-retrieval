@@ -3,7 +3,8 @@ import sys
 from matplotlib import image
 import matplotlib.pyplot as plt
 import LightPipes as lp
-
+import numpy as np
+import math
 sys.path.insert(1, '../beam_retrieval')
 
 import field_retrieval as retrieval
@@ -23,12 +24,39 @@ wavelength = 800e-9
 
 F_behind = retrieval.mgsa_field_retrieval(before_raw, behind_raw, dist_to_focus, pixel_size, wavelength)
 
-#%% Plotting
+# %%
+%matplotlib qt
 
-F_focus = lp.Forvard(F_behind, -dist_to_focus)
-F = lp.Interpol(F_focus, pixel_size*50, 50)
+r, _ = lp.Intensity(F_behind).shape
 
-print(lp.Strehl(F))
-intensity = lp.Intensity(F)
-plt.imshow(intensity)
+F_behind_highres = lp.Interpol(F_behind, r*pixel_size, r)
+
+F_focus_highres = lp.Forvard(F_behind_highres, -dist_to_focus)
+F_far = lp.PipFFT(F_focus_highres)
+
+F_far = lp.CircAperture(F_far, pixel_size*r/10,0,0)
+
+#intensity = lp.Intensity(F_far)
+#intensity[intensity < 0.003*np.max(intensity)] = 0
+#F_far = lp.SubIntensity(F_far, intensity)
+
+F_far_ideal = lp.SubPhase(F_far, 0)
+
+F_focus_ideal = lp.PipFFT(F_far_ideal, -1)
+
+intensities = []
+iwp = 10
+x = np.concatenate((
+    np.linspace(-dist_to_focus, -dist_to_focus/iwp, 10),
+    np.linspace(-dist_to_focus/iwp, dist_to_focus/iwp, 31),
+    np.linspace(dist_to_focus/iwp, dist_to_focus, 10)
+))
+for dz in x:
+    F = lp.Forvard(F_focus_ideal, dz)
+    intensities.append(np.max(lp.Intensity(F)))
+
+plt.figure()
+plt.plot(x, intensities)
+plt.show()
+
 # %%
