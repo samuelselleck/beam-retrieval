@@ -1,1 +1,5 @@
-* Dependency mamagement with poetry, run "poetry install" to install dependencies
+# Installation 
+
+```sh
+pip install LightPipes numpy matplotlib PyQt5
+```
