@@ -75,14 +75,24 @@ def plot_fields(fig, F_behind, dist_to_focus, unwrap = True):
 def plot_profile(fig, F_behind, dist_to_focus, pixel_size):
     metrics, _ = field_analysis.get_slice_metrics(F_behind, dist_to_focus, pixel_size, steps=100)
     fig.clear()
-    ax = fig.subplots()
+    plots = [
+        {"metrics": ["Width X", "Width Y"], "colors": ["tab:red", "tab:blue"]},
+        {"metrics": ["Peak Ideal Intensity", "Peak Intensity"], "colors": ["tab:green", "tab:purple"]},
+    ]
+    fig.subplots(1, len(plots))
+
     x_name = "Distance From Focus"
-    y_names = ["Peak Ideal Intensity", "Peak Intensity"]
-    ax.set_xlabel(x_name)
-    for y_name in y_names:
-        ax.plot(metrics[x_name], metrics[y_name])
-    ax.set_ylabel("Metics")
-    ax.legend(y_names)
+    for i, plot in enumerate(plots):
+        ax = fig.axes[i]
+        ax.set_xlabel(x_name)
+        ax.set_ylabel("Metics")
+        for i in range(len(plot["metrics"])):
+            y_name = plot["metrics"][i]
+            style = plot["colors"][i]
+            ax.plot(metrics[x_name], metrics[y_name], color=style)
+        ax.legend(plot["metrics"])
+
+    ax.text(0.1, 0.9, f'Strehl: {np.max(metrics["Peak Intensity"]):.2f}', transform=ax.transAxes)
 
     fig.set_tight_layout(True)
     fig.canvas.draw()
