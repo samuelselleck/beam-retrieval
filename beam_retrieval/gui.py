@@ -72,6 +72,7 @@ class MainWindow(QMainWindow):
             "pixel_size": float(self.ui.pixel_size.text()),
             "wavelength": float(self.ui.wavelength.text()),
             "iterations": self.ui.iterations.value(),
+            "threshold": float(self.ui.intensity_threshold.text())/100,
         }
 
         retrieval = BeamRetrievalThread(self, data, self.on_beam_retrieved)      
@@ -80,9 +81,10 @@ class MainWindow(QMainWindow):
     def on_beam_retrieved(self, F_behind):
         dist_to_focus = float(self.ui.distance_to_focus.text())
         pixel_size = float(self.ui.pixel_size.text())
+        threshold = float(self.ui.intensity_threshold.text())/100
         visualizations.interactive_field(self.plot_handles["reconstructed_field"], F_behind, dist_to_focus)
         visualizations.plot_fields(self.plot_handles["focus_field"], F_behind, dist_to_focus)
-        visualizations.plot_profile(self.plot_handles["profile"], F_behind, dist_to_focus, pixel_size)
+        visualizations.plot_profile(self.plot_handles["profile"], F_behind, dist_to_focus, pixel_size, threshold)
         visualizations.plot_farfield(self.plot_handles["farfield"], F_behind, dist_to_focus, pixel_size)
 
     #Helper functions

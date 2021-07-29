@@ -72,8 +72,8 @@ def plot_fields(fig, F_behind, dist_to_focus, unwrap = True):
     fig.set_tight_layout(True)
     fig.canvas.draw()
 
-def plot_profile(fig, F_behind, dist_to_focus, pixel_size):
-    metrics, _ = field_analysis.get_slice_metrics(F_behind, dist_to_focus, pixel_size, steps=100)
+def plot_profile(fig, F_behind, dist_to_focus, pixel_size, threshold):
+    metrics, _ = field_analysis.get_slice_metrics(F_behind, dist_to_focus, pixel_size, threshold, steps=100)
     fig.clear()
     plots = [
         {"metrics": ["Width X", "Width Y"], "colors": ["tab:red", "tab:blue"]},

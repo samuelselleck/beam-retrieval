@@ -2,11 +2,11 @@ import math
 import numpy as np
 import LightPipes as lp
 
-def mgsa_field_retrieval(before_focus_intensity, behind_focus_intensity, dist_to_focus, pixel_size, wavelength, iterations=100):
+def mgsa_field_retrieval(before_focus_intensity, behind_focus_intensity, dist_to_focus, pixel_size, wavelength, iterations, threshold):
 
     #Threshhold, pad edges.
-    before_focus_global = _preprocess_image(before_focus_intensity)
-    behind_focus_global = _preprocess_image(behind_focus_intensity)
+    before_focus_global = _preprocess_image(before_focus_intensity, threshold)
+    behind_focus_global = _preprocess_image(behind_focus_intensity, threshold)
 
     #Cut out square local fields using the largest dimension.
     fx, fy, fw, fh = _local_field_coords(before_focus_global)
@@ -31,13 +31,13 @@ def mgsa_field_retrieval(before_focus_intensity, behind_focus_intensity, dist_to
 
     return F_behind
 
-def _preprocess_image(img):
+def _preprocess_image(img, threshold):
     image_height, image_width = img.shape
     h_diff = (image_width - image_height)/2
 
     max_intensity = np.max(img)
     f_image = img.astype('double')/max_intensity
-    f_image[f_image < 0.05] = 0
+    f_image[f_image < threshold] = 0
     square = np.vstack([
         np.zeros((math.floor(h_diff), image_width), dtype=np.double),
         f_image,

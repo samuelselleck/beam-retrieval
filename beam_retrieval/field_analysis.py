@@ -2,7 +2,7 @@ import LightPipes as lp
 import numpy as np
 import matplotlib.pyplot as plt
 
-def get_slice_metrics(F_behind, dist_to_focus, pixel_size, steps):
+def get_slice_metrics(F_behind, dist_to_focus, pixel_size, threshold, steps):
     metrics = {
         "Distance From Focus": [],
         "Peak Intensity": [],
@@ -16,7 +16,7 @@ def get_slice_metrics(F_behind, dist_to_focus, pixel_size, steps):
     F_focus = lp.Forvard(F_behind, -dist_to_focus)
     F_far = lp.PipFFT(F_focus)
     intensity = lp.Intensity(F_far)
-    intensity[intensity < np.max(intensity)*0.01] = 0
+    intensity[intensity < np.max(intensity)*threshold] = 0
     F_far = lp.SubIntensity(F_far, intensity)
 
     F_far_ideal = lp.SubPhase(F_far, 0)
