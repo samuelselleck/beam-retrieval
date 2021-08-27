@@ -28,6 +28,7 @@ class MainWindow(QMainWindow):
             component = getattr(self.ui, button_name)
             component.clicked.connect(getattr(self, f'on_{button_name}'))
 
+        getattr(self.ui, "image_before_focus_path").returnPressed
         self.ui.image_before_focus_path.returnPressed.connect(self.on_image_before_focus_path)
         self.ui.image_behind_focus_path.returnPressed.connect(self.on_image_behind_focus_path)
 
